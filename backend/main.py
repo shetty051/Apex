@@ -281,6 +281,24 @@ def negotiate_offer(request: NegotiateRequest):
         
     return resp
 
+class MessageHistory(BaseModel):
+    role: str
+    content: str
+
+class InterpretRequest(BaseModel):
+    message: str
+    history: List[MessageHistory] = []
+
+@app.post("/buyer/interpret")
+def interpret_buyer_intent(request: InterpretRequest):
+    from buyer_agent import interpret_mission
+    try:
+        history_dicts = [{"role": h.role, "content": h.content} for h in request.history]
+        intent = interpret_mission(request.message, history_dicts)
+        return {"status": "success", "intent": intent}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
 
 
 
