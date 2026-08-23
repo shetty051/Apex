@@ -42,14 +42,23 @@ def interpret_mission(message: str, history: List[dict] = None) -> dict:
     
     full_prompt = f"{history_context}\nCurrent User Message: {message}"
     
-    response = client.models.generate_content(
-        model='gemini-3.6-flash',
-        contents=full_prompt,
-        config=genai.types.GenerateContentConfig(
-            system_instruction=SYSTEM_PROMPT,
-            response_mime_type="application/json",
-            response_schema=BuyerIntent,
-        ),
-    )
+    models_to_try = ['gemini-3.6-flash', 'gemini-2.5-flash', 'gemini-1.5-flash']
+    last_err = None
     
-    return json.loads(response.text)
+    for model_name in models_to_try:
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=full_prompt,
+                config=genai.types.GenerateContentConfig(
+                    system_instruction=SYSTEM_PROMPT,
+                    response_mime_type="application/json",
+                    response_schema=BuyerIntent,
+                ),
+            )
+            return json.loads(response.text)
+        except Exception as e:
+            last_err = e
+            continue
+            
+    raise last_err
