@@ -14,13 +14,20 @@ def check_discount_cap(discount_pct: float, cap_pct: float) -> bool:
 def check_approval_gate(order_total: float, gate_inr: float) -> bool:
     return order_total > gate_inr
 
-def evaluate_offer(sku: dict, requested_qty: int, offered_price: float, guardrails: dict) -> dict:
+def evaluate_offer(
+    sku: dict, 
+    requested_qty: int, 
+    offered_price: float, 
+    guardrails: dict,
+    buyer_prompt: str = None,
+    inventory_query: dict = None
+) -> dict:
     wholesale_cost = sku["wholesale_cost"]
     retail_price = sku["retail_price"]
+    sku_name = sku.get("name", sku["sku_id"])
     
     order_total = requested_qty * offered_price
     margin_pct = calculate_margin(offered_price, wholesale_cost)
-    
     discount_pct = ((retail_price - offered_price) / retail_price) * 100.0 if retail_price > 0 else 0.0
     
     is_margin_healthy = check_margin_floor(margin_pct, guardrails["margin_floor_pct"])
@@ -37,6 +44,16 @@ def evaluate_offer(sku: dict, requested_qty: int, offered_price: float, guardrai
         "discount_pct": round(discount_pct, 2)
     }
     
+    # Detailed step-by-step breakdown
+    step1 = f"1. Input Details: SKU {sku['sku_id']} ({sku_name}), Qty: {requested_qty}, Offered: \u20b9{offered_price} (Retail: \u20b9{retail_price}, Wholesale: \u20b9{wholesale_cost})."
+    step2 = f"2. Discount Evaluation: Calculated Discount = {round(discount_pct, 2)}% vs Max Cap = {guardrails['max_discount_pct']}% -> {'PASSED' if is_discount_safe else 'FAILED'}."
+    step3 = f"3. Margin Formula Evaluation: (\u20b9{offered_price} - \u20b9{wholesale_cost}) / \u20b9{offered_price} = {round(margin_pct, 2)}% vs Margin Floor = {guardrails['margin_floor_pct']}% -> {'PASSED' if is_margin_healthy else 'FAILED'}."
+    step4 = f"4. Gating Threshold Check: Order Total \u20b9{order_total} vs Approval Gate \u20b9{guardrails['approval_gate_inr']} -> {'GATED (REQUIRES APPROVAL)' if requires_approval else 'PASSED'}."
+    
+    detailed_trace = f"{step1}\n{step2}\n{step3}\n{step4}"
+    
+    inv_query = inventory_query or {"sku_id": sku["sku_id"], "qty": requested_qty}
+    
     if not is_margin_healthy or not is_discount_safe:
         min_price_margin = wholesale_cost / (1.0 - (guardrails["margin_floor_pct"] / 100.0))
         min_price_discount = retail_price * (1.0 - (guardrails["max_discount_pct"] / 100.0))
@@ -44,37 +61,37 @@ def evaluate_offer(sku: dict, requested_qty: int, offered_price: float, guardrai
         
         reason = []
         if not is_margin_healthy:
-            reason.append("margin too low")
+            reason.append(f"margin too low ({round(margin_pct, 2)}% < {guardrails['margin_floor_pct']}% floor)")
         if not is_discount_safe:
-            reason.append("discount too high")
+            reason.append(f"discount too high ({round(discount_pct, 2)}% > {guardrails['max_discount_pct']}% cap)")
             
         decision = "refused"
-        reasoning = f"Offer refused ({' and '.join(reason)}). Acceptable price is \u20b9{counter_price} or higher."
-        log_audit_entry(decision, reasoning, margin_math)
+        full_reasoning = f"DECISION: REFUSED ({' and '.join(reason)}).\n{detailed_trace}\nCounter-Offer Price: \u20b9{counter_price} or higher required."
+        log_audit_entry(decision, full_reasoning, margin_math, buyer_prompt=buyer_prompt, inventory_query=inv_query)
         return {
             "decision": decision,
             "margin_pct": round(margin_pct, 2),
-            "reasoning": reasoning,
+            "reasoning": full_reasoning,
             "counter_price": counter_price
         }
         
     if requires_approval:
         decision = "gated_pending_approval"
-        reasoning = f"Order total \u20b9{order_total} exceeds the approval gate of \u20b9{guardrails['approval_gate_inr']}."
-        log_audit_entry(decision, reasoning, margin_math)
+        full_reasoning = f"DECISION: GATED PENDING APPROVAL (Order total \u20b9{order_total} > \u20b9{guardrails['approval_gate_inr']} gate).\n{detailed_trace}"
+        log_audit_entry(decision, full_reasoning, margin_math, buyer_prompt=buyer_prompt, inventory_query=inv_query)
         return {
             "decision": decision,
             "margin_pct": round(margin_pct, 2),
-            "reasoning": reasoning,
+            "reasoning": full_reasoning,
             "counter_price": None
         }
         
     decision = "auto_approved"
-    reasoning = "Offer meets all automatic approval criteria."
-    log_audit_entry(decision, reasoning, margin_math)
+    full_reasoning = f"DECISION: AUTO APPROVED (Meets all margin, discount, and gating thresholds).\n{detailed_trace}"
+    log_audit_entry(decision, full_reasoning, margin_math, buyer_prompt=buyer_prompt, inventory_query=inv_query)
     return {
         "decision": decision,
         "margin_pct": round(margin_pct, 2),
-        "reasoning": reasoning,
+        "reasoning": full_reasoning,
         "counter_price": None
     }

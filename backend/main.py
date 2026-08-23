@@ -246,7 +246,14 @@ def negotiate_offer(request: NegotiateRequest):
         return response
         
     # Evaluate Offer
-    evaluation = evaluate_offer(sku, target_item.qty, request.proposed_price_per_unit, state.guardrails)
+    evaluation = evaluate_offer(
+        sku, 
+        target_item.qty, 
+        request.proposed_price_per_unit, 
+        state.guardrails,
+        buyer_prompt=f"Buyer {request.buyer_id} proposed \u20b9{request.proposed_price_per_unit}",
+        inventory_query={"sku_id": target_item.sku_id, "requested_qty": target_item.qty, "available_stock": sku["stock_qty"]}
+    )
     decision = evaluation["decision"]
     
     if decision == "auto_approved":
@@ -263,13 +270,6 @@ def negotiate_offer(request: NegotiateRequest):
         counter_offer = evaluation.get("counter_price")
         
     reasoning = evaluation["reasoning"]
-    
-    log_audit_entry(
-        decision=status,
-        reasoning=f"Negotiation Gateway: {reasoning}",
-        buyer_prompt=f"Buyer {request.buyer_id} proposed \u20b9{request.proposed_price_per_unit}",
-        inventory_query={"requested": target_item.qty, "available": sku["stock_qty"]}
-    )
     
     resp = {
         "status": status,
@@ -385,7 +385,14 @@ def execute_buyer_mission(request: MissionRequest):
         )
         order_result = None
     else:
-        evaluation = evaluate_offer(sku, qty, offered_price, state.guardrails)
+        evaluation = evaluate_offer(
+            sku, 
+            qty, 
+            offered_price, 
+            state.guardrails, 
+            buyer_prompt=request.message, 
+            inventory_query={"sku_guess": sku_guess, "sku_id": sku["sku_id"], "requested_qty": qty, "available_stock": sku["stock_qty"]}
+        )
         decision = evaluation["decision"]
         
         if decision == "auto_approved":
@@ -410,13 +417,6 @@ def execute_buyer_mission(request: MissionRequest):
         }
         if counter_offer is not None:
             negotiation_result["counter_offer"] = counter_offer
-            
-        log_audit_entry(
-            decision=status,
-            reasoning=f"Full Pipeline: {reasoning}",
-            buyer_prompt=request.message,
-            inventory_query={"requested": qty, "available": sku["stock_qty"]}
-        )
         
         if status == "auto_approved":
             amount_inr = qty * offered_price

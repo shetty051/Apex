@@ -902,7 +902,7 @@ export default function MerchantHub() {
       {/* Log Expandable Drawer */}
       {selectedLog && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl border border-slate-200 max-w-2xl w-full p-6 space-y-4 shadow-xl">
+          <div className="bg-white rounded-xl border border-slate-200 max-w-2xl w-full p-6 space-y-4 shadow-xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-slate-200 pb-3">
               <h3 className="font-bold text-slate-900 text-base">Audit Event Trace</h3>
               <button onClick={() => setSelectedLog(null)} className="text-slate-400 hover:text-slate-700 text-sm font-bold">✕</button>
@@ -912,18 +912,27 @@ export default function MerchantHub() {
                 <span className="text-slate-500 text-xs uppercase font-semibold">Decision:</span>
                 <p className="font-bold text-slate-900">{selectedLog.decision}</p>
               </div>
-              <div>
-                <span className="text-slate-500 text-xs uppercase font-semibold">Reasoning:</span>
-                <p className="text-slate-800">{selectedLog.reasoning}</p>
-              </div>
               {selectedLog.buyer_prompt && (
                 <div>
                   <span className="text-slate-500 text-xs uppercase font-semibold">Buyer Prompt:</span>
-                  <p className="text-slate-800 italic">"{selectedLog.buyer_prompt}"</p>
+                  <p className="text-[#0C8CE9] font-medium bg-blue-50 p-2.5 rounded-lg border border-blue-200 mt-1">"{selectedLog.buyer_prompt}"</p>
                 </div>
               )}
-              <div className="bg-[#0B1E36] text-blue-300 p-4 rounded-lg font-mono text-xs overflow-x-auto max-h-64">
-                <pre>{JSON.stringify(selectedLog, null, 2)}</pre>
+              {selectedLog.inventory_query && (
+                <div>
+                  <span className="text-slate-500 text-xs uppercase font-semibold">Inventory Query / Resolved Search:</span>
+                  <p className="font-mono text-xs text-slate-700 bg-slate-100 p-2.5 rounded-lg border border-slate-200 mt-1">{JSON.stringify(selectedLog.inventory_query)}</p>
+                </div>
+              )}
+              <div>
+                <span className="text-slate-500 text-xs uppercase font-semibold">Detailed Multi-Step Reasoning Trace:</span>
+                <p className="text-slate-800 font-mono text-xs whitespace-pre-line bg-slate-50 p-3 rounded-lg border border-slate-200 mt-1 leading-relaxed">{selectedLog.reasoning}</p>
+              </div>
+              <div>
+                <span className="text-slate-500 text-xs uppercase font-semibold">Raw Log Event Payload:</span>
+                <div className="bg-[#0B1E36] text-blue-300 p-4 rounded-lg font-mono text-xs overflow-x-auto max-h-64 mt-1">
+                  <pre>{JSON.stringify(selectedLog, null, 2)}</pre>
+                </div>
               </div>
             </div>
             <div className="flex justify-end">
