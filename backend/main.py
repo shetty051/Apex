@@ -195,5 +195,92 @@ def create_new_order(request: CreateOrderRequest):
 def get_orders():
     return state.orders
 
+from typing import Optional
+
+class NegotiateItem(BaseModel):
+    sku_id: str
+    qty: int
+
+class NegotiateRequest(BaseModel):
+    buyer_id: str
+    items: List[NegotiateItem]
+    proposed_price_per_unit: float
+    budget_cap: Optional[float] = None
+
+@app.post("/negotiate")
+def negotiate_offer(request: NegotiateRequest):
+    from guardrail_engine import evaluate_offer
+    from audit_logger import log_audit_entry
+
+    if not request.items:
+        return {"error": "No items provided."}
+    
+    target_item = request.items[0]
+    sku = next((item for item in state.catalog if item["sku_id"] == target_item.sku_id), None)
+    
+    if not sku:
+        return {"error": f"SKU {target_item.sku_id} not found."}
+    
+    # Stock Check
+    if target_item.qty > sku["stock_qty"]:
+        alt_sku = next((item for item in state.catalog if item["category"] == sku["category"] and item["sku_id"] != sku["sku_id"] and item["stock_qty"] >= target_item.qty), None)
+        
+        reasoning = f"Requested quantity {target_item.qty} exceeds available stock ({sku['stock_qty']})."
+        next_action = "suggest_alternative"
+        
+        log_audit_entry(
+            decision="refused_insufficient_stock",
+            reasoning=reasoning,
+            buyer_prompt=f"Buyer {request.buyer_id} requested {target_item.qty} of {sku['sku_id']}",
+            inventory_query={"requested": target_item.qty, "available": sku["stock_qty"]}
+        )
+        
+        response = {
+            "status": "refused",
+            "reasoning": reasoning,
+            "next_action": next_action
+        }
+        if alt_sku:
+            response["suggested_alternative"] = alt_sku["sku_id"]
+            
+        return response
+        
+    # Evaluate Offer
+    evaluation = evaluate_offer(sku, target_item.qty, request.proposed_price_per_unit, state.guardrails)
+    decision = evaluation["decision"]
+    
+    if decision == "auto_approved":
+        status = "auto_approved"
+        next_action = "proceed_to_checkout"
+        counter_offer = None
+    elif decision == "gated_pending_approval":
+        status = "gated_pending_approval"
+        next_action = "wait_for_human"
+        counter_offer = None
+    else:
+        status = "refused"
+        next_action = "submit_counter_offer"
+        counter_offer = evaluation.get("counter_price")
+        
+    reasoning = evaluation["reasoning"]
+    
+    log_audit_entry(
+        decision=status,
+        reasoning=f"Negotiation Gateway: {reasoning}",
+        buyer_prompt=f"Buyer {request.buyer_id} proposed \u20b9{request.proposed_price_per_unit}",
+        inventory_query={"requested": target_item.qty, "available": sku["stock_qty"]}
+    )
+    
+    resp = {
+        "status": status,
+        "reasoning": reasoning,
+        "next_action": next_action
+    }
+    if counter_offer is not None:
+        resp["counter_offer"] = counter_offer
+        
+    return resp
+
+
 
 

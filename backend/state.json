@@ -97,7 +97,72 @@
             "category": "Industrial"
         }
     ],
-    "orders": [],
+    "orders": [
+        {
+            "order_id": "order_TTBYqAWUFAIT1O",
+            "sku_id": "CHAIR-001",
+            "requested_qty": 2,
+            "offered_price": 8500.0,
+            "amount_inr": 17000.0,
+            "status": "captured",
+            "evaluation": {
+                "decision": "auto_approved",
+                "margin_pct": 52.94,
+                "reasoning": "Offer meets all automatic approval criteria.",
+                "counter_price": null
+            },
+            "razorpay_order": {
+                "amount": 1700000,
+                "amount_due": 1700000,
+                "amount_paid": 0,
+                "attempts": 0,
+                "created_at": 1787482489,
+                "currency": "INR",
+                "entity": "order",
+                "id": "order_TTBYqAWUFAIT1O",
+                "notes": {
+                    "qty": "2",
+                    "sku_id": "CHAIR-001"
+                },
+                "offer_id": null,
+                "receipt": null,
+                "status": "created"
+            },
+            "recovery_order_id": null
+        },
+        {
+            "order_id": "order_TTBYyLP3aSCQgD",
+            "sku_id": "CHAIR-001",
+            "requested_qty": 1,
+            "offered_price": 8000.0,
+            "amount_inr": 8000.0,
+            "status": "PAYMENT_RECOVERY_REQUIRED",
+            "evaluation": {
+                "decision": "auto_approved",
+                "margin_pct": 50.0,
+                "reasoning": "Offer meets all automatic approval criteria.",
+                "counter_price": null
+            },
+            "razorpay_order": {
+                "amount": 800000,
+                "amount_due": 800000,
+                "amount_paid": 0,
+                "attempts": 0,
+                "created_at": 1787482497,
+                "currency": "INR",
+                "entity": "order",
+                "id": "order_TTBYyLP3aSCQgD",
+                "notes": {
+                    "qty": "1",
+                    "sku_id": "CHAIR-001"
+                },
+                "offer_id": null,
+                "receipt": null,
+                "status": "created"
+            },
+            "recovery_order_id": "order_TTBYyU0a38hE4Q"
+        }
+    ],
     "audit_logs": [
         {
             "timestamp": "2026-08-23T10:30:38.114906Z",
@@ -148,6 +213,164 @@
             },
             "buyer_prompt": null,
             "inventory_query": null,
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T10:54:49.080711Z",
+            "decision": "auto_approved",
+            "reasoning": "Offer meets all automatic approval criteria.",
+            "margin_math": {
+                "wholesale_cost": 4000.0,
+                "retail_price": 8500.0,
+                "offered_price": 8500.0,
+                "requested_qty": 2,
+                "order_total": 17000.0,
+                "margin_pct": 52.94,
+                "discount_pct": 0.0
+            },
+            "buyer_prompt": null,
+            "inventory_query": null,
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T10:54:49.653614Z",
+            "decision": "captured",
+            "reasoning": "Order created and transitioned to captured",
+            "margin_math": {
+                "order_total": 17000.0
+            },
+            "buyer_prompt": null,
+            "inventory_query": null,
+            "razorpay_payload": {
+                "amount": 1700000,
+                "amount_due": 1700000,
+                "amount_paid": 0,
+                "attempts": 0,
+                "created_at": 1787482489,
+                "currency": "INR",
+                "entity": "order",
+                "id": "order_TTBYqAWUFAIT1O",
+                "notes": {
+                    "qty": "2",
+                    "sku_id": "CHAIR-001"
+                },
+                "offer_id": null,
+                "receipt": null,
+                "status": "created"
+            }
+        },
+        {
+            "timestamp": "2026-08-23T10:54:57.026522Z",
+            "decision": "auto_approved",
+            "reasoning": "Offer meets all automatic approval criteria.",
+            "margin_math": {
+                "wholesale_cost": 4000.0,
+                "retail_price": 8500.0,
+                "offered_price": 8000.0,
+                "requested_qty": 1,
+                "order_total": 8000.0,
+                "margin_pct": 50.0,
+                "discount_pct": 5.88
+            },
+            "buyer_prompt": null,
+            "inventory_query": null,
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T10:54:57.233953Z",
+            "decision": "PAYMENT_RECOVERY_REQUIRED",
+            "reasoning": "Order created and transitioned to PAYMENT_RECOVERY_REQUIRED",
+            "margin_math": {
+                "order_total": 8000.0
+            },
+            "buyer_prompt": null,
+            "inventory_query": null,
+            "razorpay_payload": {
+                "amount": 800000,
+                "amount_due": 800000,
+                "amount_paid": 0,
+                "attempts": 0,
+                "created_at": 1787482497,
+                "currency": "INR",
+                "entity": "order",
+                "id": "order_TTBYyLP3aSCQgD",
+                "notes": {
+                    "qty": "1",
+                    "sku_id": "CHAIR-001"
+                },
+                "offer_id": null,
+                "receipt": null,
+                "status": "created"
+            }
+        },
+        {
+            "timestamp": "2026-08-23T12:00:45.791544Z",
+            "decision": "auto_approved",
+            "reasoning": "Offer meets all automatic approval criteria.",
+            "margin_math": {
+                "wholesale_cost": 4000.0,
+                "retail_price": 8500.0,
+                "offered_price": 8500.0,
+                "requested_qty": 2,
+                "order_total": 17000.0,
+                "margin_pct": 52.94,
+                "discount_pct": 0.0
+            },
+            "buyer_prompt": null,
+            "inventory_query": null,
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T12:00:45.794147Z",
+            "decision": "auto_approved",
+            "reasoning": "Negotiation Gateway: Offer meets all automatic approval criteria.",
+            "margin_math": {},
+            "buyer_prompt": "Buyer agent_123 proposed \u20b98500.0",
+            "inventory_query": {
+                "requested": 2,
+                "available": 50
+            },
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T12:01:07.339149Z",
+            "decision": "refused",
+            "reasoning": "Offer refused (margin too low and discount too high). Acceptable price is \u20b97225.0 or higher.",
+            "margin_math": {
+                "wholesale_cost": 4000.0,
+                "retail_price": 8500.0,
+                "offered_price": 3000.0,
+                "requested_qty": 2,
+                "order_total": 6000.0,
+                "margin_pct": -33.33,
+                "discount_pct": 64.71
+            },
+            "buyer_prompt": null,
+            "inventory_query": null,
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T12:01:07.342929Z",
+            "decision": "refused",
+            "reasoning": "Negotiation Gateway: Offer refused (margin too low and discount too high). Acceptable price is \u20b97225.0 or higher.",
+            "margin_math": {},
+            "buyer_prompt": "Buyer agent_123 proposed \u20b93000.0",
+            "inventory_query": {
+                "requested": 2,
+                "available": 50
+            },
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T12:01:43.766515Z",
+            "decision": "refused_insufficient_stock",
+            "reasoning": "Requested quantity 2 exceeds available stock (1).",
+            "margin_math": {},
+            "buyer_prompt": "Buyer agent_123 requested 2 of CHAIR-003",
+            "inventory_query": {
+                "requested": 2,
+                "available": 1
+            },
             "razorpay_payload": null
         }
     ],
