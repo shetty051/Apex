@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 const API_BASE = "http://localhost:8000";
@@ -28,9 +28,13 @@ export default function MerchantHub() {
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
   const [selectedLog, setSelectedLog] = useState<any | null>(null);
 
-  // Form state for Settings / Wizard Step 3
-  const [formGuardrails, setFormGuardrails] = useState({ margin_floor_pct: 20, max_discount_pct: 15, approval_gate_inr: 50000 });
+  // Dedicated Isolated Local State for Sliders / Inputs
+  const [marginFloor, setMarginFloor] = useState<number>(20);
+  const [maxDiscount, setMaxDiscount] = useState<number>(15);
+  const [approvalGate, setApprovalGate] = useState<number>(50000);
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
+
+  const hasLoadedInitial = useRef(false);
 
   // Check localStorage on mount
   useEffect(() => {
@@ -40,7 +44,7 @@ export default function MerchantHub() {
     }
   }, []);
 
-  // Fetch data periodically
+  // Fetch data periodically without overwriting active user edits
   const fetchData = async () => {
     try {
       const [catRes, guardRes, ordRes, logsRes, schemaRes] = await Promise.all([
@@ -54,7 +58,12 @@ export default function MerchantHub() {
       if (Array.isArray(catRes)) setCatalog(catRes);
       if (guardRes) {
         setGuardrails(guardRes);
-        setFormGuardrails(prev => (prev.margin_floor_pct === guardRes.margin_floor_pct && prev.max_discount_pct === guardRes.max_discount_pct && prev.approval_gate_inr === guardRes.approval_gate_inr) ? prev : guardRes);
+        if (!hasLoadedInitial.current) {
+          setMarginFloor(guardRes.margin_floor_pct ?? 20);
+          setMaxDiscount(guardRes.max_discount_pct ?? 15);
+          setApprovalGate(guardRes.approval_gate_inr ?? 50000);
+          hasLoadedInitial.current = true;
+        }
       }
       if (Array.isArray(ordRes)) setOrders(ordRes);
       if (Array.isArray(logsRes)) setLogs(logsRes);
@@ -75,11 +84,16 @@ export default function MerchantHub() {
     setLaunchStatus("testing");
     setLaunchError(null);
     try {
-      // 1. Save Guardrails
+      // 1. Save Guardrails with isolated local state
+      const payload = {
+        margin_floor_pct: marginFloor,
+        max_discount_pct: maxDiscount,
+        approval_gate_inr: approvalGate
+      };
       const guardRes = await fetch(`${API_BASE}/guardrails`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formGuardrails)
+        body: JSON.stringify(payload)
       });
       if (!guardRes.ok) throw new Error("Failed to update guardrail parameters.");
 
@@ -97,6 +111,30 @@ export default function MerchantHub() {
     } catch (e: any) {
       setLaunchStatus("error");
       setLaunchError(e.message || "Failed to connect to backend on http://localhost:8000.");
+    }
+  };
+
+  // Save Guardrails in Hub
+  const handleSaveGuardrails = async () => {
+    try {
+      const payload = {
+        margin_floor_pct: marginFloor,
+        max_discount_pct: maxDiscount,
+        approval_gate_inr: approvalGate
+      };
+      const res = await fetch(`${API_BASE}/guardrails`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setGuardrails(updated);
+        setSaveStatus("Guardrails updated successfully!");
+        setTimeout(() => setSaveStatus(null), 3000);
+      }
+    } catch (e) {
+      setSaveStatus("Failed to update guardrails.");
     }
   };
 
@@ -131,29 +169,11 @@ export default function MerchantHub() {
     );
   }
 
-  // Save Guardrails in Hub
-  const handleSaveGuardrails = async () => {
-    try {
-      const res = await fetch(`${API_BASE}/guardrails`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formGuardrails)
-      });
-      if (res.ok) {
-        const updated = await res.json();
-        setGuardrails(updated);
-        setSaveStatus("Guardrails updated successfully!");
-        setTimeout(() => setSaveStatus(null), 3000);
-      }
-    } catch (e) {
-      setSaveStatus("Failed to update guardrails.");
-    }
-  };
-
   // Reset Demo
   const handleResetDemo = async () => {
     try {
       await fetch(`${API_BASE}/reset-demo`, { method: "POST" });
+      hasLoadedInitial.current = false;
       fetchData();
       alert("Demo state has been reset to seed catalog!");
     } catch (e) {
@@ -330,7 +350,7 @@ export default function MerchantHub() {
                   Step 3 of 3: Guardrails & Gateway Launch
                 </span>
                 <h2 className="text-2xl font-bold text-slate-900">Set Deterministic Guardrails</h2>
-                <p className="text-slate-600 text-sm">Pre-filled with backend defaults. Adjust parameters before activating the node.</p>
+                <p className="text-slate-600 text-sm">Isolated local controls pre-filled from backend. Adjust parameters cleanly before activating.</p>
               </div>
 
               {launchError && (
@@ -347,14 +367,14 @@ export default function MerchantHub() {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <label className="text-sm font-semibold text-slate-700">Margin Floor (%):</label>
-                    <span className="font-mono text-sm font-bold text-[#0C8CE9]">{formGuardrails.margin_floor_pct}%</span>
+                    <span className="font-mono text-sm font-bold text-[#0C8CE9]">{marginFloor}%</span>
                   </div>
                   <input
                     type="range"
                     min="5"
                     max="50"
-                    value={formGuardrails.margin_floor_pct}
-                    onChange={e => setFormGuardrails({ ...formGuardrails, margin_floor_pct: Number(e.target.value) })}
+                    value={marginFloor}
+                    onChange={(e) => setMarginFloor(Number(e.target.value))}
                     className="w-full accent-[#0C8CE9]"
                   />
                   <p className="text-xs text-slate-500">Offers resulting in a gross margin below this threshold will be refused.</p>
@@ -363,14 +383,14 @@ export default function MerchantHub() {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <label className="text-sm font-semibold text-slate-700">Max Discount Cap (%):</label>
-                    <span className="font-mono text-sm font-bold text-[#0C8CE9]">{formGuardrails.max_discount_pct}%</span>
+                    <span className="font-mono text-sm font-bold text-[#0C8CE9]">{maxDiscount}%</span>
                   </div>
                   <input
                     type="range"
                     min="5"
                     max="40"
-                    value={formGuardrails.max_discount_pct}
-                    onChange={e => setFormGuardrails({ ...formGuardrails, max_discount_pct: Number(e.target.value) })}
+                    value={maxDiscount}
+                    onChange={(e) => setMaxDiscount(Number(e.target.value))}
                     className="w-full accent-[#0C8CE9]"
                   />
                   <p className="text-xs text-slate-500">Maximum allowable discount relative to retail price.</p>
@@ -380,8 +400,8 @@ export default function MerchantHub() {
                   <label className="text-sm font-semibold text-slate-700">Approval Gate Threshold (INR):</label>
                   <input
                     type="number"
-                    value={formGuardrails.approval_gate_inr}
-                    onChange={e => setFormGuardrails({ ...formGuardrails, approval_gate_inr: Number(e.target.value) })}
+                    value={approvalGate}
+                    onChange={(e) => setApprovalGate(Number(e.target.value))}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#0C8CE9]"
                   />
                   <p className="text-xs text-slate-500">Order totals exceeding this amount require human approval.</p>
@@ -793,14 +813,14 @@ export default function MerchantHub() {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <label className="text-sm font-semibold text-slate-700">Margin Floor (%):</label>
-                    <span className="font-mono text-sm font-bold text-[#0C8CE9]">{formGuardrails.margin_floor_pct}%</span>
+                    <span className="font-mono text-sm font-bold text-[#0C8CE9]">{marginFloor}%</span>
                   </div>
                   <input
                     type="range"
                     min="5"
                     max="50"
-                    value={formGuardrails.margin_floor_pct}
-                    onChange={e => setFormGuardrails({ ...formGuardrails, margin_floor_pct: Number(e.target.value) })}
+                    value={marginFloor}
+                    onChange={(e) => setMarginFloor(Number(e.target.value))}
                     className="w-full accent-[#0C8CE9]"
                   />
                   <p className="text-xs text-slate-500">Offers resulting in a gross margin below this threshold will be refused.</p>
@@ -809,14 +829,14 @@ export default function MerchantHub() {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <label className="text-sm font-semibold text-slate-700">Max Discount Cap (%):</label>
-                    <span className="font-mono text-sm font-bold text-[#0C8CE9]">{formGuardrails.max_discount_pct}%</span>
+                    <span className="font-mono text-sm font-bold text-[#0C8CE9]">{maxDiscount}%</span>
                   </div>
                   <input
                     type="range"
                     min="5"
                     max="40"
-                    value={formGuardrails.max_discount_pct}
-                    onChange={e => setFormGuardrails({ ...formGuardrails, max_discount_pct: Number(e.target.value) })}
+                    value={maxDiscount}
+                    onChange={(e) => setMaxDiscount(Number(e.target.value))}
                     className="w-full accent-[#0C8CE9]"
                   />
                   <p className="text-xs text-slate-500">Maximum allowable discount relative to retail price.</p>
@@ -826,8 +846,8 @@ export default function MerchantHub() {
                   <label className="text-sm font-semibold text-slate-700">Approval Gate Threshold (INR):</label>
                   <input
                     type="number"
-                    value={formGuardrails.approval_gate_inr}
-                    onChange={e => setFormGuardrails({ ...formGuardrails, approval_gate_inr: Number(e.target.value) })}
+                    value={approvalGate}
+                    onChange={(e) => setApprovalGate(Number(e.target.value))}
                     className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#0C8CE9]"
                   />
                   <p className="text-xs text-slate-500">Order totals exceeding this amount require human approval.</p>
