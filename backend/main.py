@@ -88,3 +88,19 @@ def update_guardrails(new_guardrails: Guardrails):
 def reset_demo():
     state.reset_state()
     return {"status": "Demo state reset successfully."}
+
+class OfferRequest(BaseModel):
+    sku_id: str
+    requested_qty: int
+    offered_price: float
+
+@app.post("/evaluate-offer")
+def api_evaluate_offer(request: OfferRequest):
+    # Find the SKU
+    sku = next((item for item in state.catalog if item["sku_id"] == request.sku_id), None)
+    if not sku:
+        return {"error": f"SKU {request.sku_id} not found."}
+    
+    from guardrail_engine import evaluate_offer
+    return evaluate_offer(sku, request.requested_qty, request.offered_price, state.guardrails)
+
