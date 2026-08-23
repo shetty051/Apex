@@ -104,3 +104,26 @@ def api_evaluate_offer(request: OfferRequest):
     from guardrail_engine import evaluate_offer
     return evaluate_offer(sku, request.requested_qty, request.offered_price, state.guardrails)
 
+from fastapi import Query
+
+@app.get("/logs")
+def get_logs(type: str = Query("all", description="Filter by type: discount, gated, failure, all")):
+    logs = state.audit_logs
+    if type == "all":
+        return logs
+        
+    filtered = []
+    for log in logs:
+        decision = log.get("decision", "")
+        if type == "failure" and decision == "refused":
+            filtered.append(log)
+        elif type == "gated" and decision == "gated_pending_approval":
+            filtered.append(log)
+        elif type == "discount":
+            margin_math = log.get("margin_math", {})
+            if decision == "auto_approved" and margin_math.get("discount_pct", 0) > 0:
+                filtered.append(log)
+                
+    return filtered
+
+

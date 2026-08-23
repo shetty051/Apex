@@ -98,7 +98,59 @@
         }
     ],
     "orders": [],
-    "audit_logs": [],
+    "audit_logs": [
+        {
+            "timestamp": "2026-08-23T10:30:38.114906Z",
+            "decision": "refused",
+            "reasoning": "Offer refused (margin too low and discount too high). Acceptable price is \u20b97225.0 or higher.",
+            "margin_math": {
+                "wholesale_cost": 4000.0,
+                "retail_price": 8500.0,
+                "offered_price": 3000.0,
+                "requested_qty": 1,
+                "order_total": 3000.0,
+                "margin_pct": -33.33,
+                "discount_pct": 64.71
+            },
+            "buyer_prompt": null,
+            "inventory_query": null,
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T10:30:47.793555Z",
+            "decision": "auto_approved",
+            "reasoning": "Offer meets all automatic approval criteria.",
+            "margin_math": {
+                "wholesale_cost": 4000.0,
+                "retail_price": 8500.0,
+                "offered_price": 8000.0,
+                "requested_qty": 1,
+                "order_total": 8000.0,
+                "margin_pct": 50.0,
+                "discount_pct": 5.88
+            },
+            "buyer_prompt": null,
+            "inventory_query": null,
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T10:30:56.715787Z",
+            "decision": "gated_pending_approval",
+            "reasoning": "Order total \u20b980000.0 exceeds the approval gate of \u20b950000.0.",
+            "margin_math": {
+                "wholesale_cost": 4000.0,
+                "retail_price": 8500.0,
+                "offered_price": 8000.0,
+                "requested_qty": 10,
+                "order_total": 80000.0,
+                "margin_pct": 50.0,
+                "discount_pct": 5.88
+            },
+            "buyer_prompt": null,
+            "inventory_query": null,
+            "razorpay_payload": null
+        }
+    ],
     "guardrails": {
         "margin_floor_pct": 20.0,
         "max_discount_pct": 15.0,

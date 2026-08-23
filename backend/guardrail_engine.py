@@ -1,3 +1,5 @@
+from audit_logger import log_audit_entry
+
 def calculate_margin(offered_price: float, wholesale_cost: float) -> float:
     if offered_price <= 0:
         return -100.0
@@ -25,6 +27,16 @@ def evaluate_offer(sku: dict, requested_qty: int, offered_price: float, guardrai
     is_discount_safe = check_discount_cap(discount_pct, guardrails["max_discount_pct"])
     requires_approval = check_approval_gate(order_total, guardrails["approval_gate_inr"])
     
+    margin_math = {
+        "wholesale_cost": wholesale_cost,
+        "retail_price": retail_price,
+        "offered_price": offered_price,
+        "requested_qty": requested_qty,
+        "order_total": order_total,
+        "margin_pct": round(margin_pct, 2),
+        "discount_pct": round(discount_pct, 2)
+    }
+    
     if not is_margin_healthy or not is_discount_safe:
         min_price_margin = wholesale_cost / (1.0 - (guardrails["margin_floor_pct"] / 100.0))
         min_price_discount = retail_price * (1.0 - (guardrails["max_discount_pct"] / 100.0))
@@ -36,24 +48,33 @@ def evaluate_offer(sku: dict, requested_qty: int, offered_price: float, guardrai
         if not is_discount_safe:
             reason.append("discount too high")
             
+        decision = "refused"
+        reasoning = f"Offer refused ({' and '.join(reason)}). Acceptable price is \u20b9{counter_price} or higher."
+        log_audit_entry(decision, reasoning, margin_math)
         return {
-            "decision": "refused",
+            "decision": decision,
             "margin_pct": round(margin_pct, 2),
-            "reasoning": f"Offer refused ({' and '.join(reason)}). Acceptable price is \u20b9{counter_price} or higher.",
+            "reasoning": reasoning,
             "counter_price": counter_price
         }
         
     if requires_approval:
+        decision = "gated_pending_approval"
+        reasoning = f"Order total \u20b9{order_total} exceeds the approval gate of \u20b9{guardrails['approval_gate_inr']}."
+        log_audit_entry(decision, reasoning, margin_math)
         return {
-            "decision": "gated_pending_approval",
+            "decision": decision,
             "margin_pct": round(margin_pct, 2),
-            "reasoning": f"Order total \u20b9{order_total} exceeds the approval gate of \u20b9{guardrails['approval_gate_inr']}.",
+            "reasoning": reasoning,
             "counter_price": None
         }
         
+    decision = "auto_approved"
+    reasoning = "Offer meets all automatic approval criteria."
+    log_audit_entry(decision, reasoning, margin_math)
     return {
-        "decision": "auto_approved",
+        "decision": decision,
         "margin_pct": round(margin_pct, 2),
-        "reasoning": "Offer meets all automatic approval criteria.",
+        "reasoning": reasoning,
         "counter_price": None
     }
