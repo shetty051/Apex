@@ -161,6 +161,47 @@
                 "available": 50
             },
             "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T13:01:55.355369Z",
+            "decision": "refused",
+            "reasoning": "Offer refused (margin too low and discount too high). Acceptable price is \u20b97225.0 or higher.",
+            "margin_math": {
+                "wholesale_cost": 4000.0,
+                "retail_price": 8500.0,
+                "offered_price": 1000.0,
+                "requested_qty": 2,
+                "order_total": 2000.0,
+                "margin_pct": -300.0,
+                "discount_pct": 88.24
+            },
+            "buyer_prompt": null,
+            "inventory_query": null,
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T13:01:55.356558Z",
+            "decision": "refused",
+            "reasoning": "Full Pipeline: Offer refused (margin too low and discount too high). Acceptable price is \u20b97225.0 or higher.",
+            "margin_math": {},
+            "buyer_prompt": "buy me 2 chairs under 2k",
+            "inventory_query": {
+                "requested": 2,
+                "available": 50
+            },
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T13:02:01.946127Z",
+            "decision": "refused_insufficient_stock",
+            "reasoning": "Requested quantity 2 exceeds available stock (1).",
+            "margin_math": {},
+            "buyer_prompt": "buy me 2 executive high-back chairs",
+            "inventory_query": {
+                "requested": 2,
+                "available": 1
+            },
+            "razorpay_payload": null
         }
     ],
     "guardrails": {
