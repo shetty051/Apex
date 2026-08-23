@@ -126,4 +126,74 @@ def get_logs(type: str = Query("all", description="Filter by type: discount, gat
                 
     return filtered
 
+class CreateOrderRequest(BaseModel):
+    sku_id: str
+    requested_qty: int
+    offered_price: float
+    simulate_fail: bool = False
+
+@app.post("/orders")
+def create_new_order(request: CreateOrderRequest):
+    sku = next((item for item in state.catalog if item["sku_id"] == request.sku_id), None)
+    if not sku:
+        return {"error": f"SKU {request.sku_id} not found."}
+    
+    from guardrail_engine import evaluate_offer
+    from razorpay_client import create_order, simulate_capture
+    
+    evaluation = evaluate_offer(sku, request.requested_qty, request.offered_price, state.guardrails)
+    decision = evaluation["decision"]
+    
+    if decision == "refused":
+        return {"error": "Offer refused.", "evaluation": evaluation}
+    
+    amount_inr = request.requested_qty * request.offered_price
+    rp_response = create_order(amount_inr, notes={"sku_id": request.sku_id, "qty": str(request.requested_qty)})
+    
+    if not rp_response.get("success"):
+        return {"error": "Failed to create Razorpay order.", "details": rp_response.get("error")}
+        
+    rp_order = rp_response["order"]
+    order_id = rp_order["id"]
+    
+    capture_resp = simulate_capture(order_id, should_fail=request.simulate_fail)
+    
+    if not capture_resp["success"]:
+        order_status = "PAYMENT_RECOVERY_REQUIRED"
+        fresh_rp = create_order(amount_inr, notes={"retry_for": order_id})
+        new_order_id = fresh_rp["order"]["id"] if fresh_rp.get("success") else None
+    else:
+        order_status = decision if decision == "gated_pending_approval" else "captured"
+        new_order_id = None
+        
+    order_record = {
+        "order_id": order_id,
+        "sku_id": request.sku_id,
+        "requested_qty": request.requested_qty,
+        "offered_price": request.offered_price,
+        "amount_inr": amount_inr,
+        "status": order_status,
+        "evaluation": evaluation,
+        "razorpay_order": rp_order,
+        "recovery_order_id": new_order_id
+    }
+    
+    state.orders.append(order_record)
+    state.save_state()
+    
+    from audit_logger import log_audit_entry
+    log_audit_entry(
+        decision=order_status,
+        reasoning=f"Order created and transitioned to {order_status}",
+        margin_math={"order_total": amount_inr},
+        razorpay_payload=rp_order
+    )
+    
+    return {"status": "success", "order": order_record}
+
+@app.get("/orders")
+def get_orders():
+    return state.orders
+
+
 
