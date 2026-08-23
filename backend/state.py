@@ -65,6 +65,54 @@ SEED_CATALOG = [
         "retail_price": 5000.0,
         "stock_qty": 80,
         "category": "Seating"
+    },
+    {
+        "sku_id": "CHAIR-003",
+        "name": "Executive Leather High-Back Chair",
+        "wholesale_cost": 7000.0,
+        "retail_price": 13500.0,
+        "stock_qty": 1,
+        "category": "Seating"
+    },
+    {
+        "sku_id": "TABLE-001",
+        "name": "Modular 8-Seater Conference Table",
+        "wholesale_cost": 24000.0,
+        "retail_price": 42000.0,
+        "stock_qty": 6,
+        "category": "Meeting Room"
+    },
+    {
+        "sku_id": "MAT-001",
+        "name": "Anti-Fatigue Ergonomic Standing Mat",
+        "wholesale_cost": 900.0,
+        "retail_price": 1800.0,
+        "stock_qty": 45,
+        "category": "Accessories"
+    },
+    {
+        "sku_id": "STORE-001",
+        "name": "Steel Mobile Under-Desk Pedestal Drawer",
+        "wholesale_cost": 3200.0,
+        "retail_price": 6000.0,
+        "stock_qty": 25,
+        "category": "Storage"
+    },
+    {
+        "sku_id": "PANEL-001",
+        "name": "Acoustic Privacy Desk Divider Screen",
+        "wholesale_cost": 1800.0,
+        "retail_price": 3600.0,
+        "stock_qty": 30,
+        "category": "Accessories"
+    },
+    {
+        "sku_id": "BENCH-001",
+        "name": "Industrial Heavy-Duty Utility Workbench",
+        "wholesale_cost": 18000.0,
+        "retail_price": 32000.0,
+        "stock_qty": 8,
+        "category": "Industrial"
     }
 ]
 
