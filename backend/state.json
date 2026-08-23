@@ -161,6 +161,105 @@
                 "status": "created"
             },
             "recovery_order_id": "order_TTBYyU0a38hE4Q"
+        },
+        {
+            "order_id": "order_TTD53Di8PhiBTp",
+            "sku_id": "CHAIR-001",
+            "requested_qty": 2,
+            "offered_price": 8000.0,
+            "amount_inr": 16000.0,
+            "status": "captured",
+            "evaluation": {
+                "decision": "auto_approved",
+                "margin_pct": 50.0,
+                "reasoning": "Offer meets all automatic approval criteria.",
+                "counter_price": null
+            },
+            "razorpay_order": {
+                "amount": 1600000,
+                "amount_due": 1600000,
+                "amount_paid": 0,
+                "attempts": 0,
+                "created_at": 1787487840,
+                "currency": "INR",
+                "entity": "order",
+                "id": "order_TTD53Di8PhiBTp",
+                "notes": {
+                    "pipeline": "full_handshake",
+                    "qty": "2",
+                    "sku_id": "CHAIR-001"
+                },
+                "offer_id": null,
+                "receipt": null,
+                "status": "created"
+            },
+            "recovery_order_id": null
+        },
+        {
+            "order_id": "order_TTD5ef3MfpltXz",
+            "sku_id": "CHAIR-001",
+            "requested_qty": 2,
+            "offered_price": 8500.0,
+            "amount_inr": 17000.0,
+            "status": "captured",
+            "evaluation": {
+                "decision": "auto_approved",
+                "margin_pct": 52.94,
+                "reasoning": "Offer meets all automatic approval criteria.",
+                "counter_price": null
+            },
+            "razorpay_order": {
+                "amount": 1700000,
+                "amount_due": 1700000,
+                "amount_paid": 0,
+                "attempts": 0,
+                "created_at": 1787487875,
+                "currency": "INR",
+                "entity": "order",
+                "id": "order_TTD5ef3MfpltXz",
+                "notes": {
+                    "pipeline": "full_handshake",
+                    "qty": "2",
+                    "sku_id": "CHAIR-001"
+                },
+                "offer_id": null,
+                "receipt": null,
+                "status": "created"
+            },
+            "recovery_order_id": null
+        },
+        {
+            "order_id": "order_TTD6slzfUDLj6x",
+            "sku_id": "TABLE-001",
+            "requested_qty": 1,
+            "offered_price": 38000.0,
+            "amount_inr": 38000.0,
+            "status": "captured",
+            "evaluation": {
+                "decision": "auto_approved",
+                "margin_pct": 36.84,
+                "reasoning": "Offer meets all automatic approval criteria.",
+                "counter_price": null
+            },
+            "razorpay_order": {
+                "amount": 3800000,
+                "amount_due": 3800000,
+                "amount_paid": 0,
+                "attempts": 0,
+                "created_at": 1787487944,
+                "currency": "INR",
+                "entity": "order",
+                "id": "order_TTD6slzfUDLj6x",
+                "notes": {
+                    "pipeline": "full_handshake",
+                    "qty": "1",
+                    "sku_id": "TABLE-001"
+                },
+                "offer_id": null,
+                "receipt": null,
+                "status": "created"
+            },
+            "recovery_order_id": null
         }
     ],
     "audit_logs": [
@@ -370,6 +469,134 @@
             "inventory_query": {
                 "requested": 2,
                 "available": 1
+            },
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T12:24:00.604349Z",
+            "decision": "auto_approved",
+            "reasoning": "Offer meets all automatic approval criteria.",
+            "margin_math": {
+                "wholesale_cost": 4000.0,
+                "retail_price": 8500.0,
+                "offered_price": 8000.0,
+                "requested_qty": 2,
+                "order_total": 16000.0,
+                "margin_pct": 50.0,
+                "discount_pct": 5.88
+            },
+            "buyer_prompt": null,
+            "inventory_query": null,
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T12:24:00.607520Z",
+            "decision": "auto_approved",
+            "reasoning": "Full Pipeline: Offer meets all automatic approval criteria.",
+            "margin_math": {},
+            "buyer_prompt": "buy me 2 chairs under 16k",
+            "inventory_query": {
+                "requested": 2,
+                "available": 50
+            },
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T12:24:21.157855Z",
+            "decision": "refused",
+            "reasoning": "Offer refused (margin too low and discount too high). Acceptable price is \u20b97225.0 or higher.",
+            "margin_math": {
+                "wholesale_cost": 4000.0,
+                "retail_price": 8500.0,
+                "offered_price": 1000.0,
+                "requested_qty": 2,
+                "order_total": 2000.0,
+                "margin_pct": -300.0,
+                "discount_pct": 88.24
+            },
+            "buyer_prompt": null,
+            "inventory_query": null,
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T12:24:21.159549Z",
+            "decision": "refused",
+            "reasoning": "Full Pipeline: Offer refused (margin too low and discount too high). Acceptable price is \u20b97225.0 or higher.",
+            "margin_math": {},
+            "buyer_prompt": "buy me 2 chairs under 2k",
+            "inventory_query": {
+                "requested": 2,
+                "available": 50
+            },
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T12:24:35.336845Z",
+            "decision": "auto_approved",
+            "reasoning": "Offer meets all automatic approval criteria.",
+            "margin_math": {
+                "wholesale_cost": 4000.0,
+                "retail_price": 8500.0,
+                "offered_price": 8500.0,
+                "requested_qty": 2,
+                "order_total": 17000.0,
+                "margin_pct": 52.94,
+                "discount_pct": 0.0
+            },
+            "buyer_prompt": null,
+            "inventory_query": null,
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T12:24:35.340942Z",
+            "decision": "auto_approved",
+            "reasoning": "Full Pipeline: Offer meets all automatic approval criteria.",
+            "margin_math": {},
+            "buyer_prompt": "buy me 2 executive high-back chairs",
+            "inventory_query": {
+                "requested": 2,
+                "available": 50
+            },
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T12:25:36.556317Z",
+            "decision": "refused_insufficient_stock",
+            "reasoning": "Requested quantity 2 exceeds available stock (1).",
+            "margin_math": {},
+            "buyer_prompt": "buy me 2 executive high-back chairs",
+            "inventory_query": {
+                "requested": 2,
+                "available": 1
+            },
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T12:25:44.572283Z",
+            "decision": "auto_approved",
+            "reasoning": "Offer meets all automatic approval criteria.",
+            "margin_math": {
+                "wholesale_cost": 24000.0,
+                "retail_price": 42000.0,
+                "offered_price": 38000.0,
+                "requested_qty": 1,
+                "order_total": 38000.0,
+                "margin_pct": 36.84,
+                "discount_pct": 9.52
+            },
+            "buyer_prompt": null,
+            "inventory_query": null,
+            "razorpay_payload": null
+        },
+        {
+            "timestamp": "2026-08-23T12:25:44.575727Z",
+            "decision": "auto_approved",
+            "reasoning": "Full Pipeline: Offer meets all automatic approval criteria.",
+            "margin_math": {},
+            "buyer_prompt": "buy me 1 conference table under 38k",
+            "inventory_query": {
+                "requested": 1,
+                "available": 6
             },
             "razorpay_payload": null
         }

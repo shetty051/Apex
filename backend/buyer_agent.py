@@ -43,7 +43,7 @@ def interpret_mission(message: str, history: List[dict] = None) -> dict:
     full_prompt = f"{history_context}\nCurrent User Message: {message}"
     
     response = client.models.generate_content(
-        model='gemini-2.5-flash',
+        model='gemini-3.6-flash',
         contents=full_prompt,
         config=genai.types.GenerateContentConfig(
             system_instruction=SYSTEM_PROMPT,

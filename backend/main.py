@@ -289,6 +289,175 @@ class InterpretRequest(BaseModel):
     message: str
     history: List[MessageHistory] = []
 
+def resolve_sku(sku_guess: str) -> Optional[dict]:
+    if not sku_guess:
+        return state.catalog[0] if state.catalog else None
+    sku_guess_lower = sku_guess.lower()
+    
+    # 1. Exact ID
+    for item in state.catalog:
+        if item["sku_id"].lower() == sku_guess_lower:
+            return item
+            
+    # 2. Exact or substring match in name (e.g. "executive high-back chair" in "Executive Leather High-Back Chair")
+    # Clean up punctuation/whitespace
+    words = [w for w in sku_guess_lower.split() if len(w) > 2]
+    best_match = None
+    max_matches = 0
+    for item in state.catalog:
+        name_lower = item["name"].lower()
+        if sku_guess_lower in name_lower or name_lower in sku_guess_lower:
+            return item
+        matches = sum(1 for w in words if w in name_lower)
+        if matches > max_matches:
+            max_matches = matches
+            best_match = item
+            
+    if best_match and max_matches >= 2:
+        return best_match
+
+    # 3. Category match
+    for item in state.catalog:
+        if sku_guess_lower in item["category"].lower():
+            return item
+            
+    # 4. Fallbacks
+    if "chair" in sku_guess_lower:
+        return next((item for item in state.catalog if "chair" in item["name"].lower()), None)
+    if "table" in sku_guess_lower:
+        return next((item for item in state.catalog if "table" in item["name"].lower()), None)
+    if "mat" in sku_guess_lower:
+        return next((item for item in state.catalog if "mat" in item["name"].lower()), None)
+        
+    return state.catalog[0] if state.catalog else None
+
+class MissionRequest(BaseModel):
+    message: str
+    history: List[MessageHistory] = []
+
+@app.post("/buyer/mission")
+def execute_buyer_mission(request: MissionRequest):
+    from buyer_agent import interpret_mission
+    from audit_logger import log_audit_entry
+    from guardrail_engine import evaluate_offer
+    from razorpay_client import create_order, simulate_capture
+
+    history_dicts = [{"role": h.role, "content": h.content} for h in request.history]
+    try:
+        intent = interpret_mission(request.message, history_dicts)
+    except Exception as e:
+        return {"status": "error", "message": f"Failed to interpret mission: {str(e)}"}
+    
+    if not intent.get("items"):
+        return {"status": "error", "message": "No items extracted from mission."}
+        
+    first_item = intent["items"][0]
+    sku_guess = first_item.get("sku_guess", "")
+    qty = first_item.get("qty", 1)
+    
+    sku = resolve_sku(sku_guess)
+    if not sku:
+        return {"status": "error", "message": f"Could not match SKU for guess '{sku_guess}'."}
+        
+    budget_cap = intent.get("budget_cap_inr", 0)
+    if budget_cap > 0:
+        offered_price = round(budget_cap / qty, 2)
+    else:
+        offered_price = float(sku["retail_price"])
+        
+    if qty > sku["stock_qty"]:
+        alt_sku = next((item for item in state.catalog if item["category"] == sku["category"] and item["sku_id"] != sku["sku_id"] and item["stock_qty"] >= qty), None)
+        reasoning = f"Requested quantity {qty} exceeds available stock ({sku['stock_qty']})."
+        
+        negotiation_result = {
+            "status": "refused",
+            "reasoning": reasoning,
+            "next_action": "suggest_alternative"
+        }
+        if alt_sku:
+            negotiation_result["suggested_alternative"] = alt_sku["sku_id"]
+            
+        log_audit_entry(
+            decision="refused_insufficient_stock",
+            reasoning=reasoning,
+            buyer_prompt=request.message,
+            inventory_query={"requested": qty, "available": sku["stock_qty"]}
+        )
+        order_result = None
+    else:
+        evaluation = evaluate_offer(sku, qty, offered_price, state.guardrails)
+        decision = evaluation["decision"]
+        
+        if decision == "auto_approved":
+            status = "auto_approved"
+            next_action = "proceed_to_checkout"
+            counter_offer = None
+        elif decision == "gated_pending_approval":
+            status = "gated_pending_approval"
+            next_action = "wait_for_human"
+            counter_offer = None
+        else:
+            status = "refused"
+            next_action = "submit_counter_offer"
+            counter_offer = evaluation.get("counter_price")
+            
+        reasoning = evaluation["reasoning"]
+        
+        negotiation_result = {
+            "status": status,
+            "reasoning": reasoning,
+            "next_action": next_action
+        }
+        if counter_offer is not None:
+            negotiation_result["counter_offer"] = counter_offer
+            
+        log_audit_entry(
+            decision=status,
+            reasoning=f"Full Pipeline: {reasoning}",
+            buyer_prompt=request.message,
+            inventory_query={"requested": qty, "available": sku["stock_qty"]}
+        )
+        
+        if status == "auto_approved":
+            amount_inr = qty * offered_price
+            rp_response = create_order(amount_inr, notes={"sku_id": sku["sku_id"], "qty": str(qty), "pipeline": "full_handshake"})
+            
+            if rp_response.get("success"):
+                rp_order = rp_response["order"]
+                order_id = rp_order["id"]
+                capture_resp = simulate_capture(order_id, should_fail=False)
+                order_status = "captured"
+                
+                order_record = {
+                    "order_id": order_id,
+                    "sku_id": sku["sku_id"],
+                    "requested_qty": qty,
+                    "offered_price": offered_price,
+                    "amount_inr": amount_inr,
+                    "status": order_status,
+                    "evaluation": evaluation,
+                    "razorpay_order": rp_order,
+                    "recovery_order_id": None
+                }
+                state.orders.append(order_record)
+                state.save_state()
+                order_result = order_record
+            else:
+                order_result = {"error": "Razorpay order creation failed", "details": rp_response.get("error")}
+        else:
+            order_result = None
+
+    handshake_trail = {
+        "buyer_prompt": request.message,
+        "interpreted_intent": intent,
+        "matched_sku": sku["sku_id"],
+        "offered_price_per_unit": offered_price,
+        "negotiation_result": negotiation_result,
+        "order_result": order_result
+    }
+    
+    return {"status": "success", "handshake_trail": handshake_trail}
+
 @app.post("/buyer/interpret")
 def interpret_buyer_intent(request: InterpretRequest):
     from buyer_agent import interpret_mission
@@ -298,6 +467,7 @@ def interpret_buyer_intent(request: InterpretRequest):
         return {"status": "success", "intent": intent}
     except Exception as e:
         return {"status": "error", "message": str(e)}
+
 
 
 
