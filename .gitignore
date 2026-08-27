@@ -1,0 +1,21 @@
+# Environment variables & secrets
+.env
+.env.local
+.env*.local
+
+# Python / Virtual Environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+venv/
+.venv/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+build/
+
+# Runtime state
+backend/state.json
+state.json

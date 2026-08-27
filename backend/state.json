@@ -5,7 +5,7 @@
             "name": "Ergonomic Office Chair Pro",
             "wholesale_cost": 4000.0,
             "retail_price": 8500.0,
-            "stock_qty": 50,
+            "stock_qty": 44,
             "category": "Seating"
         },
         {
@@ -17,20 +17,12 @@
             "category": "Desks"
         },
         {
-            "sku_id": "DESK-002",
-            "name": "L-Shaped Corner Desk",
-            "wholesale_cost": 12000.0,
-            "retail_price": 22000.0,
-            "stock_qty": 15,
-            "category": "Desks"
-        },
-        {
-            "sku_id": "CABLE-001",
-            "name": "Under-Desk Cable Management Tray",
-            "wholesale_cost": 800.0,
-            "retail_price": 1500.0,
-            "stock_qty": 100,
-            "category": "Accessories"
+            "sku_id": "TABLE-001",
+            "name": "Modular 8-Seater Conference Table",
+            "wholesale_cost": 24000.0,
+            "retail_price": 42000.0,
+            "stock_qty": 6,
+            "category": "Meeting Room"
         },
         {
             "sku_id": "MON-001",
@@ -41,46 +33,6 @@
             "category": "Accessories"
         },
         {
-            "sku_id": "CHAIR-002",
-            "name": "Mesh Back Task Chair",
-            "wholesale_cost": 2500.0,
-            "retail_price": 5000.0,
-            "stock_qty": 80,
-            "category": "Seating"
-        },
-        {
-            "sku_id": "CHAIR-003",
-            "name": "Executive Leather High-Back Chair",
-            "wholesale_cost": 7000.0,
-            "retail_price": 13500.0,
-            "stock_qty": 1,
-            "category": "Seating"
-        },
-        {
-            "sku_id": "TABLE-001",
-            "name": "Modular 8-Seater Conference Table",
-            "wholesale_cost": 24000.0,
-            "retail_price": 42000.0,
-            "stock_qty": 6,
-            "category": "Meeting Room"
-        },
-        {
-            "sku_id": "MAT-001",
-            "name": "Anti-Fatigue Ergonomic Standing Mat",
-            "wholesale_cost": 900.0,
-            "retail_price": 1800.0,
-            "stock_qty": 45,
-            "category": "Accessories"
-        },
-        {
-            "sku_id": "STORE-001",
-            "name": "Steel Mobile Under-Desk Pedestal Drawer",
-            "wholesale_cost": 3200.0,
-            "retail_price": 6000.0,
-            "stock_qty": 25,
-            "category": "Storage"
-        },
-        {
             "sku_id": "PANEL-001",
             "name": "Acoustic Privacy Desk Divider Screen",
             "wholesale_cost": 1800.0,
@@ -89,22 +41,22 @@
             "category": "Accessories"
         },
         {
-            "sku_id": "BENCH-001",
-            "name": "Industrial Heavy-Duty Utility Workbench",
-            "wholesale_cost": 18000.0,
-            "retail_price": 32000.0,
-            "stock_qty": 8,
-            "category": "Industrial"
+            "sku_id": "MAT-001",
+            "name": "Anti-Fatigue Ergonomic Standing Mat",
+            "wholesale_cost": 900.0,
+            "retail_price": 1800.0,
+            "stock_qty": 45,
+            "category": "Accessories"
         }
     ],
     "orders": [
         {
-            "order_id": "order_TTDgiEKB3oMmgU",
+            "order_id": "order_TUnGWUUZDHyXCw",
             "sku_id": "CHAIR-001",
             "requested_qty": 2,
             "offered_price": 8000.0,
             "amount_inr": 16000.0,
-            "status": "captured",
+            "status": "PAYMENT_RECOVERY_REQUIRED",
             "evaluation": {
                 "decision": "auto_approved",
                 "margin_pct": 50.0,
@@ -116,12 +68,12 @@
                 "amount_due": 1600000,
                 "amount_paid": 0,
                 "attempts": 0,
-                "created_at": 1787489980,
+                "created_at": 1787833610,
                 "currency": "INR",
                 "entity": "order",
-                "id": "order_TTDgiEKB3oMmgU",
+                "id": "order_TUnGWUUZDHyXCw",
                 "notes": {
-                    "pipeline": "full_handshake",
+                    "pipeline": "external_settle",
                     "qty": "2",
                     "sku_id": "CHAIR-001"
                 },
@@ -129,10 +81,45 @@
                 "receipt": null,
                 "status": "created"
             },
-            "recovery_order_id": null
+            "recovery_order_id": null,
+            "stock_decremented": true
         },
         {
-            "order_id": "order_TTDniDqzTHjANj",
+            "order_id": "order_TUnHhy3mmtO0y9",
+            "sku_id": "CHAIR-001",
+            "requested_qty": 2,
+            "offered_price": 8000.0,
+            "amount_inr": 16000.0,
+            "status": "PAYMENT_RECOVERY_REQUIRED",
+            "evaluation": {
+                "decision": "auto_approved",
+                "margin_pct": 50.0,
+                "reasoning": "Offer meets all automatic approval criteria.",
+                "counter_price": null
+            },
+            "razorpay_order": {
+                "amount": 1600000,
+                "amount_due": 1600000,
+                "amount_paid": 0,
+                "attempts": 0,
+                "created_at": 1787833678,
+                "currency": "INR",
+                "entity": "order",
+                "id": "order_TUnHhy3mmtO0y9",
+                "notes": {
+                    "pipeline": "external_settle",
+                    "qty": "2",
+                    "sku_id": "CHAIR-001"
+                },
+                "offer_id": null,
+                "receipt": null,
+                "status": "created"
+            },
+            "recovery_order_id": null,
+            "stock_decremented": true
+        },
+        {
+            "order_id": "order_TUnLhFLt4yYOyn",
             "sku_id": "CHAIR-001",
             "requested_qty": 2,
             "offered_price": 8000.0,
@@ -149,12 +136,12 @@
                 "amount_due": 1600000,
                 "amount_paid": 0,
                 "attempts": 0,
-                "created_at": 1787490377,
+                "created_at": 1787833904,
                 "currency": "INR",
                 "entity": "order",
-                "id": "order_TTDniDqzTHjANj",
+                "id": "order_TUnLhFLt4yYOyn",
                 "notes": {
-                    "pipeline": "full_handshake",
+                    "pipeline": "external_settle",
                     "qty": "2",
                     "sku_id": "CHAIR-001"
                 },
@@ -162,12 +149,62 @@
                 "receipt": null,
                 "status": "created"
             },
-            "recovery_order_id": null
+            "recovery_order_id": null,
+            "stock_decremented": true
         }
     ],
     "audit_logs": [
         {
-            "timestamp": "2026-08-23T12:59:39.717773Z",
+            "timestamp": "2026-08-27T12:26:51.296292+00:00",
+            "event_type": "negotiation",
+            "buyer_id": "buyer_sim_01",
+            "decision": "payment_recovery_required",
+            "reasoning": "Payment gateway capture simulation failed. Preserving negotiated terms (Price: \u20b98000, Qty: 2) and generating recovery token.",
+            "margin_math": {
+                "wholesale_cost": 4000.0,
+                "retail_price": 8500.0,
+                "offered_price": 8000.0,
+                "requested_qty": 2,
+                "order_total": 16000.0,
+                "margin_pct": 50.0,
+                "discount_pct": 5.88,
+                "margin_floor_pct": 20.0,
+                "max_discount_pct": 15.0,
+                "approval_gate_inr": 50000.0,
+                "is_margin_healthy": true,
+                "is_discount_safe": true,
+                "requires_approval": false
+            },
+            "buyer_prompt": "External agent buyer_sim_01 settlement request",
+            "inventory_query": {
+                "order_id": "order_TUnGWUUZDHyXCw",
+                "sku_id": "CHAIR-001",
+                "requested": 2,
+                "status": "payment_recovery_required"
+            },
+            "razorpay_payload": {
+                "amount": 1600000,
+                "amount_due": 1600000,
+                "amount_paid": 0,
+                "attempts": 0,
+                "created_at": 1787833610,
+                "currency": "INR",
+                "entity": "order",
+                "id": "order_TUnGWUUZDHyXCw",
+                "notes": {
+                    "pipeline": "external_settle",
+                    "qty": "2",
+                    "sku_id": "CHAIR-001"
+                },
+                "offer_id": null,
+                "receipt": null,
+                "status": "created"
+            }
+        },
+        {
+            "timestamp": "2026-08-27T12:27:58.508055+00:00",
+            "event_type": "negotiation",
+            "buyer_id": "simulator_buyer",
             "decision": "auto_approved",
             "reasoning": "Offer meets all automatic approval criteria.",
             "margin_math": {
@@ -177,67 +214,73 @@
                 "requested_qty": 2,
                 "order_total": 16000.0,
                 "margin_pct": 50.0,
-                "discount_pct": 5.88
+                "discount_pct": 5.88,
+                "margin_floor_pct": 20.0,
+                "max_discount_pct": 15.0,
+                "approval_gate_inr": 50000.0,
+                "is_margin_healthy": true,
+                "is_discount_safe": true,
+                "requires_approval": false
             },
-            "buyer_prompt": null,
-            "inventory_query": null,
-            "razorpay_payload": null
-        },
-        {
-            "timestamp": "2026-08-23T12:59:39.718795Z",
-            "decision": "auto_approved",
-            "reasoning": "Full Pipeline: Offer meets all automatic approval criteria.",
-            "margin_math": {},
-            "buyer_prompt": "buy me 2 chairs under 16k",
+            "buyer_prompt": "Buyer simulator_buyer proposed \u20b98000.0",
             "inventory_query": {
+                "sku_id": "CHAIR-001",
                 "requested": 2,
-                "available": 50
+                "available": 48
             },
             "razorpay_payload": null
         },
         {
-            "timestamp": "2026-08-23T13:01:55.355369Z",
-            "decision": "refused",
-            "reasoning": "Offer refused (margin too low and discount too high). Acceptable price is \u20b97225.0 or higher.",
+            "timestamp": "2026-08-27T12:27:58.615757+00:00",
+            "event_type": "negotiation",
+            "buyer_id": "simulator_buyer",
+            "decision": "payment_recovery_required",
+            "reasoning": "Payment gateway capture simulation failed. Preserving negotiated terms (Price: \u20b98000, Qty: 2) and generating recovery token.",
             "margin_math": {
                 "wholesale_cost": 4000.0,
                 "retail_price": 8500.0,
-                "offered_price": 1000.0,
+                "offered_price": 8000.0,
                 "requested_qty": 2,
-                "order_total": 2000.0,
-                "margin_pct": -300.0,
-                "discount_pct": 88.24
+                "order_total": 16000.0,
+                "margin_pct": 50.0,
+                "discount_pct": 5.88,
+                "margin_floor_pct": 20.0,
+                "max_discount_pct": 15.0,
+                "approval_gate_inr": 50000.0,
+                "is_margin_healthy": true,
+                "is_discount_safe": true,
+                "requires_approval": false
             },
-            "buyer_prompt": null,
-            "inventory_query": null,
-            "razorpay_payload": null
-        },
-        {
-            "timestamp": "2026-08-23T13:01:55.356558Z",
-            "decision": "refused",
-            "reasoning": "Full Pipeline: Offer refused (margin too low and discount too high). Acceptable price is \u20b97225.0 or higher.",
-            "margin_math": {},
-            "buyer_prompt": "buy me 2 chairs under 2k",
+            "buyer_prompt": "External agent simulator_buyer settlement request",
             "inventory_query": {
+                "order_id": "order_TUnHhy3mmtO0y9",
+                "sku_id": "CHAIR-001",
                 "requested": 2,
-                "available": 50
+                "status": "payment_recovery_required"
             },
-            "razorpay_payload": null
+            "razorpay_payload": {
+                "amount": 1600000,
+                "amount_due": 1600000,
+                "amount_paid": 0,
+                "attempts": 0,
+                "created_at": 1787833678,
+                "currency": "INR",
+                "entity": "order",
+                "id": "order_TUnHhy3mmtO0y9",
+                "notes": {
+                    "pipeline": "external_settle",
+                    "qty": "2",
+                    "sku_id": "CHAIR-001"
+                },
+                "offer_id": null,
+                "receipt": null,
+                "status": "created"
+            }
         },
         {
-            "timestamp": "2026-08-23T13:02:01.946127Z",
-            "decision": "refused_insufficient_stock",
-            "reasoning": "Requested quantity 2 exceeds available stock (1).",
-            "margin_math": {},
-            "buyer_prompt": "buy me 2 executive high-back chairs",
-            "inventory_query": {
-                "requested": 2,
-                "available": 1
-            },
-            "razorpay_payload": null
-        },
-        {
-            "timestamp": "2026-08-23T13:06:17.790249Z",
+            "timestamp": "2026-08-27T12:31:43.013788+00:00",
+            "event_type": "negotiation",
+            "buyer_id": "external_agent_001",
             "decision": "auto_approved",
             "reasoning": "Offer meets all automatic approval criteria.",
             "margin_math": {
@@ -247,181 +290,19 @@
                 "requested_qty": 2,
                 "order_total": 16000.0,
                 "margin_pct": 50.0,
-                "discount_pct": 5.88
+                "discount_pct": 5.88,
+                "margin_floor_pct": 20.0,
+                "max_discount_pct": 15.0,
+                "approval_gate_inr": 50000.0,
+                "is_margin_healthy": true,
+                "is_discount_safe": true,
+                "requires_approval": false
             },
-            "buyer_prompt": null,
-            "inventory_query": null,
-            "razorpay_payload": null
-        },
-        {
-            "timestamp": "2026-08-23T13:06:17.791551Z",
-            "decision": "auto_approved",
-            "reasoning": "Full Pipeline: Offer meets all automatic approval criteria.",
-            "margin_math": {},
-            "buyer_prompt": "buy me 2 chairs under 16k",
+            "buyer_prompt": "Buyer external_agent_001 proposed \u20b98000.0",
             "inventory_query": {
+                "sku_id": "CHAIR-001",
                 "requested": 2,
-                "available": 50
-            },
-            "razorpay_payload": null
-        },
-        {
-            "timestamp": "2026-08-23T13:12:01.048041Z",
-            "decision": "refused",
-            "reasoning": "DECISION: REFUSED (margin 11.11% < 20.0% floor and discount 43.75% > 15.0% cap).\n1. Input Details: SKU TEST-001 (Test Item), Qty: 1, Offered: \u20b94500.0 (Retail: \u20b98000.0, Wholesale: \u20b94000.0).\n2. Discount Evaluation: Calculated Discount = 43.75% vs Max Cap = 15.0% -> FAILED.\n3. Margin Formula Evaluation: (\u20b94500.0 - \u20b94000.0) / \u20b94500.0 = 11.11% vs Margin Floor = 20.0% -> FAILED.\n4. Gating Threshold Check: Order Total \u20b94500.0 vs Approval Gate \u20b950000.0 -> PASSED.\nCounter-Offer Price: \u20b96800.0 or higher required.",
-            "margin_math": {
-                "wholesale_cost": 4000.0,
-                "retail_price": 8000.0,
-                "offered_price": 4500.0,
-                "requested_qty": 1,
-                "order_total": 4500.0,
-                "margin_pct": 11.11,
-                "discount_pct": 43.75
-            },
-            "buyer_prompt": null,
-            "inventory_query": {
-                "sku_id": "TEST-001",
-                "qty": 1
-            },
-            "razorpay_payload": null
-        },
-        {
-            "timestamp": "2026-08-23T13:12:01.190938Z",
-            "decision": "refused",
-            "reasoning": "DECISION: REFUSED (discount 25.0% > 15.0% cap).\n1. Input Details: SKU TEST-001 (Test Item), Qty: 1, Offered: \u20b96000.0 (Retail: \u20b98000.0, Wholesale: \u20b94000.0).\n2. Discount Evaluation: Calculated Discount = 25.0% vs Max Cap = 15.0% -> FAILED.\n3. Margin Formula Evaluation: (\u20b96000.0 - \u20b94000.0) / \u20b96000.0 = 33.33% vs Margin Floor = 20.0% -> PASSED.\n4. Gating Threshold Check: Order Total \u20b96000.0 vs Approval Gate \u20b950000.0 -> PASSED.\nCounter-Offer Price: \u20b96800.0 or higher required.",
-            "margin_math": {
-                "wholesale_cost": 4000.0,
-                "retail_price": 8000.0,
-                "offered_price": 6000.0,
-                "requested_qty": 1,
-                "order_total": 6000.0,
-                "margin_pct": 33.33,
-                "discount_pct": 25.0
-            },
-            "buyer_prompt": null,
-            "inventory_query": {
-                "sku_id": "TEST-001",
-                "qty": 1
-            },
-            "razorpay_payload": null
-        },
-        {
-            "timestamp": "2026-08-23T13:12:01.195161Z",
-            "decision": "gated_pending_approval",
-            "reasoning": "DECISION: GATED PENDING APPROVAL (Order total \u20b970000.0 > \u20b950000.0 gate).\n1. Input Details: SKU TEST-001 (Test Item), Qty: 10, Offered: \u20b97000.0 (Retail: \u20b98000.0, Wholesale: \u20b94000.0).\n2. Discount Evaluation: Calculated Discount = 12.5% vs Max Cap = 15.0% -> PASSED.\n3. Margin Formula Evaluation: (\u20b97000.0 - \u20b94000.0) / \u20b97000.0 = 42.86% vs Margin Floor = 20.0% -> PASSED.\n4. Gating Threshold Check: Order Total \u20b970000.0 vs Approval Gate \u20b950000.0 -> GATED (REQUIRES APPROVAL).",
-            "margin_math": {
-                "wholesale_cost": 4000.0,
-                "retail_price": 8000.0,
-                "offered_price": 7000.0,
-                "requested_qty": 10,
-                "order_total": 70000.0,
-                "margin_pct": 42.86,
-                "discount_pct": 12.5
-            },
-            "buyer_prompt": null,
-            "inventory_query": {
-                "sku_id": "TEST-001",
-                "qty": 10
-            },
-            "razorpay_payload": null
-        },
-        {
-            "timestamp": "2026-08-23T13:12:01.198886Z",
-            "decision": "auto_approved",
-            "reasoning": "DECISION: AUTO APPROVED (Meets all margin, discount, and gating thresholds).\n1. Input Details: SKU TEST-001 (Test Item), Qty: 5, Offered: \u20b97000.0 (Retail: \u20b98000.0, Wholesale: \u20b94000.0).\n2. Discount Evaluation: Calculated Discount = 12.5% vs Max Cap = 15.0% -> PASSED.\n3. Margin Formula Evaluation: (\u20b97000.0 - \u20b94000.0) / \u20b97000.0 = 42.86% vs Margin Floor = 20.0% -> PASSED.\n4. Gating Threshold Check: Order Total \u20b935000.0 vs Approval Gate \u20b950000.0 -> PASSED.",
-            "margin_math": {
-                "wholesale_cost": 4000.0,
-                "retail_price": 8000.0,
-                "offered_price": 7000.0,
-                "requested_qty": 5,
-                "order_total": 35000.0,
-                "margin_pct": 42.86,
-                "discount_pct": 12.5
-            },
-            "buyer_prompt": null,
-            "inventory_query": {
-                "sku_id": "TEST-001",
-                "qty": 5
-            },
-            "razorpay_payload": null
-        },
-        {
-            "timestamp": "2026-08-23T13:12:13.263354Z",
-            "decision": "refused",
-            "reasoning": "DECISION: REFUSED (margin too low (11.11% < 20.0% floor) and discount too high (43.75% > 15.0% cap)).\n1. Input Details: SKU TEST-001 (Test Item), Qty: 1, Offered: \u20b94500.0 (Retail: \u20b98000.0, Wholesale: \u20b94000.0).\n2. Discount Evaluation: Calculated Discount = 43.75% vs Max Cap = 15.0% -> FAILED.\n3. Margin Formula Evaluation: (\u20b94500.0 - \u20b94000.0) / \u20b94500.0 = 11.11% vs Margin Floor = 20.0% -> FAILED.\n4. Gating Threshold Check: Order Total \u20b94500.0 vs Approval Gate \u20b950000.0 -> PASSED.\nCounter-Offer Price: \u20b96800.0 or higher required.",
-            "margin_math": {
-                "wholesale_cost": 4000.0,
-                "retail_price": 8000.0,
-                "offered_price": 4500.0,
-                "requested_qty": 1,
-                "order_total": 4500.0,
-                "margin_pct": 11.11,
-                "discount_pct": 43.75
-            },
-            "buyer_prompt": null,
-            "inventory_query": {
-                "sku_id": "TEST-001",
-                "qty": 1
-            },
-            "razorpay_payload": null
-        },
-        {
-            "timestamp": "2026-08-23T13:12:13.267518Z",
-            "decision": "refused",
-            "reasoning": "DECISION: REFUSED (discount too high (25.0% > 15.0% cap)).\n1. Input Details: SKU TEST-001 (Test Item), Qty: 1, Offered: \u20b96000.0 (Retail: \u20b98000.0, Wholesale: \u20b94000.0).\n2. Discount Evaluation: Calculated Discount = 25.0% vs Max Cap = 15.0% -> FAILED.\n3. Margin Formula Evaluation: (\u20b96000.0 - \u20b94000.0) / \u20b96000.0 = 33.33% vs Margin Floor = 20.0% -> PASSED.\n4. Gating Threshold Check: Order Total \u20b96000.0 vs Approval Gate \u20b950000.0 -> PASSED.\nCounter-Offer Price: \u20b96800.0 or higher required.",
-            "margin_math": {
-                "wholesale_cost": 4000.0,
-                "retail_price": 8000.0,
-                "offered_price": 6000.0,
-                "requested_qty": 1,
-                "order_total": 6000.0,
-                "margin_pct": 33.33,
-                "discount_pct": 25.0
-            },
-            "buyer_prompt": null,
-            "inventory_query": {
-                "sku_id": "TEST-001",
-                "qty": 1
-            },
-            "razorpay_payload": null
-        },
-        {
-            "timestamp": "2026-08-23T13:12:13.269981Z",
-            "decision": "gated_pending_approval",
-            "reasoning": "DECISION: GATED PENDING APPROVAL (Order total \u20b970000.0 > \u20b950000.0 gate).\n1. Input Details: SKU TEST-001 (Test Item), Qty: 10, Offered: \u20b97000.0 (Retail: \u20b98000.0, Wholesale: \u20b94000.0).\n2. Discount Evaluation: Calculated Discount = 12.5% vs Max Cap = 15.0% -> PASSED.\n3. Margin Formula Evaluation: (\u20b97000.0 - \u20b94000.0) / \u20b97000.0 = 42.86% vs Margin Floor = 20.0% -> PASSED.\n4. Gating Threshold Check: Order Total \u20b970000.0 vs Approval Gate \u20b950000.0 -> GATED (REQUIRES APPROVAL).",
-            "margin_math": {
-                "wholesale_cost": 4000.0,
-                "retail_price": 8000.0,
-                "offered_price": 7000.0,
-                "requested_qty": 10,
-                "order_total": 70000.0,
-                "margin_pct": 42.86,
-                "discount_pct": 12.5
-            },
-            "buyer_prompt": null,
-            "inventory_query": {
-                "sku_id": "TEST-001",
-                "qty": 10
-            },
-            "razorpay_payload": null
-        },
-        {
-            "timestamp": "2026-08-23T13:12:13.272323Z",
-            "decision": "auto_approved",
-            "reasoning": "DECISION: AUTO APPROVED (Meets all margin, discount, and gating thresholds).\n1. Input Details: SKU TEST-001 (Test Item), Qty: 5, Offered: \u20b97000.0 (Retail: \u20b98000.0, Wholesale: \u20b94000.0).\n2. Discount Evaluation: Calculated Discount = 12.5% vs Max Cap = 15.0% -> PASSED.\n3. Margin Formula Evaluation: (\u20b97000.0 - \u20b94000.0) / \u20b97000.0 = 42.86% vs Margin Floor = 20.0% -> PASSED.\n4. Gating Threshold Check: Order Total \u20b935000.0 vs Approval Gate \u20b950000.0 -> PASSED.",
-            "margin_math": {
-                "wholesale_cost": 4000.0,
-                "retail_price": 8000.0,
-                "offered_price": 7000.0,
-                "requested_qty": 5,
-                "order_total": 35000.0,
-                "margin_pct": 42.86,
-                "discount_pct": 12.5
-            },
-            "buyer_prompt": null,
-            "inventory_query": {
-                "sku_id": "TEST-001",
-                "qty": 5
+                "available": 46
             },
             "razorpay_payload": null
         }
