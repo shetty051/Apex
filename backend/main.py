@@ -1,5 +1,5 @@
 import time
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
@@ -363,6 +363,25 @@ class NegotiateItem(BaseModel):
     sku_id: str
     qty: int
 
+def check_rate_limit(identifier: str, limit: int = 10, window_seconds: int = 60) -> tuple[bool, int]:
+    """
+    In-memory sliding window rate limiter.
+    Returns (is_allowed: bool, retry_after_seconds: int).
+    """
+    now = time.time()
+    cutoff = now - window_seconds
+    with state.lock:
+        timestamps = state.rate_limit_store.get(identifier, [])
+        valid_timestamps = [t for t in timestamps if t > cutoff]
+        if len(valid_timestamps) >= limit:
+            oldest = valid_timestamps[0]
+            retry_after = max(1, int(oldest + window_seconds - now))
+            state.rate_limit_store[identifier] = valid_timestamps
+            return False, retry_after
+        valid_timestamps.append(now)
+        state.rate_limit_store[identifier] = valid_timestamps
+        return True, 0
+
 class NegotiateRequest(BaseModel):
     buyer_id: str
     items: List[NegotiateItem]
@@ -370,7 +389,16 @@ class NegotiateRequest(BaseModel):
     budget_cap: Optional[float] = None
 
 @app.post("/negotiate")
-def negotiate_offer(request: NegotiateRequest):
+def negotiate_offer(request: NegotiateRequest, raw_request: Request):
+    identifier = request.buyer_id.strip() if request.buyer_id and request.buyer_id.strip() else (raw_request.client.host if raw_request.client else "unknown_client")
+    is_allowed, retry_after = check_rate_limit(identifier, limit=10, window_seconds=60)
+    if not is_allowed:
+        raise HTTPException(
+            status_code=429,
+            detail=f"Rate limit exceeded (10 requests per minute). Please try again in {retry_after} seconds.",
+            headers={"Retry-After": str(retry_after)}
+        )
+
     from guardrail_engine import evaluate_offer
     from audit_logger import log_audit_entry
 
@@ -482,6 +510,7 @@ class SettleOrderRequest(BaseModel):
     agreed_price_per_unit: Optional[float] = None
     negotiated_price: Optional[float] = None
     order_id: Optional[str] = None
+    idempotency_key: Optional[str] = None
     simulate_fail: bool = False
 
 @app.post("/orders/settle")
@@ -489,6 +518,7 @@ def settle_order(request: SettleOrderRequest):
     """
     Lightweight, zero-session-state settlement endpoint for external callers/agents.
     Thread-safe and atomic to prevent overselling under concurrent load.
+    Supports idempotency protection via 'idempotency_key'.
     """
     if request.order_id:
         return approve_order(request.order_id)
@@ -500,6 +530,10 @@ def settle_order(request: SettleOrderRequest):
     qty = request.qty or 1
 
     with state.lock:
+        # Check idempotency key before stock decrement or Razorpay order creation
+        if request.idempotency_key and request.idempotency_key in state.idempotency_store:
+            return state.idempotency_store[request.idempotency_key]
+
         sku = next((item for item in state.catalog if item["sku_id"] == request.sku_id), None)
         if not sku:
             raise HTTPException(status_code=404, detail=f"SKU '{request.sku_id}' not found.")
@@ -576,13 +610,18 @@ def settle_order(request: SettleOrderRequest):
             state.orders.append(order_record)
         state.save_state()
 
-    return {
-        "status": "success",
-        "message": "Order settled successfully without session state.",
-        "order_id": order_id,
-        "order": order_record,
-        "catalog": state.catalog
-    }
+        result = {
+            "status": "success",
+            "message": "Order settled successfully without session state.",
+            "order_id": order_id,
+            "order": order_record,
+            "catalog": state.catalog
+        }
+
+        if request.idempotency_key:
+            state.idempotency_store[request.idempotency_key] = result
+
+        return result
 
 class MessageHistory(BaseModel):
     role: str

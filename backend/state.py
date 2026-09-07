@@ -86,6 +86,8 @@ class AppState:
         self.orders = []
         self.audit_logs = []
         self.guardrails = {}
+        self.idempotency_store = {}
+        self.rate_limit_store = {}
         # Server startup ALWAYS wipes stale state and initializes clean defaults
         self.reset_state()
 
@@ -142,6 +144,8 @@ class AppState:
         self.orders = []
         self.audit_logs = []
         self.guardrails = DEFAULT_GUARDRAILS.copy()
+        self.idempotency_store = {}
+        self.rate_limit_store = {}
         self.save_state()
 
     def reset_inventory(self):
